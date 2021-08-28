@@ -1,16 +1,15 @@
-import { defineComponent, inject, PropType } from 'vue';
+import type { PropType } from 'vue';
+import { defineComponent, inject } from 'vue';
 import { tuple } from '../_util/type';
 import CloseOutlined from '@ant-design/icons-vue/CloseOutlined';
 import PlusOutlined from '@ant-design/icons-vue/PlusOutlined';
 import VcTabs, { TabPane } from '../vc-tabs/src';
 import TabContent from '../vc-tabs/src/TabContent';
-import { isFlexSupported } from '../_util/styleChecker';
 import PropTypes, { withUndefined } from '../_util/vue-types';
 import {
   getComponent,
   getOptionProps,
   filterEmpty,
-  findDOMNode,
   getPropsData,
   getSlot,
 } from '../_util/props-util';
@@ -28,6 +27,7 @@ export default defineComponent({
     activeKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     defaultActiveKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     hideAdd: PropTypes.looseBool.def(false),
+    centered: PropTypes.looseBool.def(false),
     tabBarStyle: PropTypes.object,
     tabBarExtraContent: PropTypes.any,
     destroyInactiveTabPane: PropTypes.looseBool.def(false),
@@ -58,13 +58,6 @@ export default defineComponent({
     return {
       configProvider: inject('configProvider', defaultConfigProvider),
     };
-  },
-  mounted() {
-    const NO_FLEX = ' no-flex';
-    const tabNode = findDOMNode(this);
-    if (tabNode && !isFlexSupported && tabNode.className.indexOf(NO_FLEX) === -1) {
-      tabNode.className += NO_FLEX;
-    }
   },
   methods: {
     removeTab(targetKey: string, e: MouseEvent) {

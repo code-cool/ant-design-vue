@@ -1,10 +1,11 @@
 import { createApp } from 'vue';
 import ConfirmDialog from './ConfirmDialog';
-import { destroyFns, ModalFuncProps } from './Modal';
+import type { ModalFuncProps } from './Modal';
+import { destroyFns } from './Modal';
 
 import Omit from 'omit.js';
 
-export default function confirm(config: ModalFuncProps & { parentContext?: any }) {
+export default function confirm(config: ModalFuncProps) {
   const div = document.createElement('div');
   document.body.appendChild(div);
   let currentConfig = { ...Omit(config, ['parentContext']), close, visible: true } as any;

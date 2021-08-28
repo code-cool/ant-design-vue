@@ -1,5 +1,6 @@
 import supportsPassive from '../../_util/supportsPassive';
-import { watch, Ref } from 'vue';
+import type { Ref } from 'vue';
+import { watch, onMounted } from 'vue';
 
 const SMOOTH_PTG = 14 / 15;
 
@@ -80,28 +81,34 @@ export default function useMobileTouchMove(
     }
   };
 
-  watch(inVirtual, val => {
-    listRef.value.removeEventListener(
-      'touchstart',
-      onTouchStart,
-      supportsPassive
-        ? ({
-            passive: false,
-          } as EventListenerOptions)
-        : false,
+  onMounted(() => {
+    watch(
+      inVirtual,
+      val => {
+        listRef.value.removeEventListener(
+          'touchstart',
+          onTouchStart,
+          supportsPassive
+            ? ({
+                passive: false,
+              } as EventListenerOptions)
+            : false,
+        );
+        cleanUpEvents();
+        clearInterval(interval);
+        if (val) {
+          listRef.value.addEventListener(
+            'touchstart',
+            onTouchStart,
+            supportsPassive
+              ? ({
+                  passive: false,
+                } as EventListenerOptions)
+              : false,
+          );
+        }
+      },
+      { immediate: true },
     );
-    cleanUpEvents();
-    clearInterval(interval);
-    if (val) {
-      listRef.value.addEventListener(
-        'touchstart',
-        onTouchStart,
-        supportsPassive
-          ? ({
-              passive: false,
-            } as EventListenerOptions)
-          : false,
-      );
-    }
   });
 }

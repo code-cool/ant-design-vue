@@ -1,5 +1,5 @@
-import { PropType } from 'vue';
-import moment from 'moment';
+import type { PropType } from 'vue';
+import type moment from 'moment';
 import PropTypes, { withUndefined } from '../_util/vue-types';
 import { tuple } from '../_util/type';
 
@@ -67,7 +67,7 @@ export const DatePickerProps = {
   showTime: withUndefined(PropTypes.oneOfType([PropTypes.object, PropTypes.looseBool])),
   open: PropTypes.looseBool,
   disabledTime: PropTypes.func,
-  mode: PropTypes.oneOf(tuple('time', 'date', 'month', 'year')),
+  mode: PropTypes.oneOf(tuple('time', 'date', 'month', 'year', 'decade')),
   onOpenChange: PropTypes.func,
   onPanelChange: PropTypes.func,
   onOk: PropTypes.func,

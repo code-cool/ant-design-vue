@@ -1,4 +1,5 @@
-import { defineComponent, PropType } from 'vue';
+import type { PropType } from 'vue';
+import { defineComponent } from 'vue';
 import { tuple } from '../_util/type';
 import UpOutlined from '@ant-design/icons-vue/UpOutlined';
 import DownOutlined from '@ant-design/icons-vue/DownOutlined';
@@ -12,6 +13,7 @@ const TabBar = defineComponent({
   inheritAttrs: false,
   props: {
     prefixCls: PropTypes.string,
+    centered: PropTypes.looseBool.def(false),
     tabBarStyle: PropTypes.style,
     tabBarExtraContent: PropTypes.VNodeChild,
     type: PropTypes.oneOf(tuple('line', 'card', 'editable-card')),
@@ -29,6 +31,7 @@ const TabBar = defineComponent({
   },
   render() {
     const {
+      centered,
       tabBarStyle,
       animated = true,
       renderTabBar,
@@ -62,6 +65,7 @@ const TabBar = defineComponent({
     // Additional className for style usage
     const cls = {
       [this.$attrs.class as string]: this.$attrs.class,
+      [`${prefixCls}-centered-bar`]: centered,
       [`${prefixCls}-${tabPosition}-bar`]: true,
       [`${prefixCls}-${size}-bar`]: !!size,
       [`${prefixCls}-card-bar`]: type && type.indexOf('card') >= 0,

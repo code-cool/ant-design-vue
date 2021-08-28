@@ -1,8 +1,9 @@
 import classNames from '../_util/classNames';
-import Dialog, { ModalFuncProps } from './Modal';
+import type { ModalFuncProps } from './Modal';
+import Dialog from './Modal';
 import ActionButton from './ActionButton';
 import { getConfirmLocale } from './locale';
-import { FunctionalComponent } from 'vue';
+import type { FunctionalComponent } from 'vue';
 
 interface ConfirmDialogProps extends ModalFuncProps {
   afterClose?: () => void;
@@ -16,6 +17,7 @@ const ConfirmDialog: FunctionalComponent<ConfirmDialogProps> = props => {
     onCancel,
     onOk,
     close,
+    closable = false,
     zIndex,
     afterClose,
     visible,
@@ -83,6 +85,7 @@ const ConfirmDialog: FunctionalComponent<ConfirmDialogProps> = props => {
       keyboard={keyboard}
       centered={centered}
       getContainer={getContainer}
+      closable={closable}
     >
       <div class={`${contentPrefixCls}-body-wrapper`}>
         <div class={`${contentPrefixCls}-body`}>

@@ -1,4 +1,5 @@
-import { defineComponent, inject, PropType } from 'vue';
+import type { PropType } from 'vue';
+import { defineComponent, inject } from 'vue';
 import PropTypes from '../_util/vue-types';
 import BaseMixin from '../_util/BaseMixin';
 import { getOptionProps, hasProp } from '../_util/props-util';
@@ -93,11 +94,11 @@ const Calendar = defineComponent({
     },
     triggerPanelChange(value: moment.Moment, mode: CalendarMode | undefined) {
       const val = this.valueFormat ? momentToString(value, this.valueFormat) : value;
-      this.$emit('panelChange', val, mode);
       if (value !== this.sValue) {
         this.$emit('update:value', val);
         this.$emit('change', val);
       }
+      this.$emit('panelChange', val, mode);
     },
 
     triggerSelect(value: moment.Moment) {

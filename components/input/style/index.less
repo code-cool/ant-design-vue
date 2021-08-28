@@ -33,7 +33,7 @@
   transition: all 0.3s;
 
   &:hover {
-    color: #333;
+    color: @input-icon-hover-color;
   }
 }
 
@@ -48,6 +48,13 @@
 
 .@{ant-prefix}-input-textarea-clear-icon-hidden {
   visibility: hidden;
+}
+
+.@{ant-prefix}-input-affix-wrapper-textarea-with-clear-btn {
+  padding: 0 !important;
+  .@{ant-prefix}-input {
+    padding: @input-padding-vertical-base @input-padding-horizontal-base;
+  }
 }
 
 .@{ant-prefix}-input-textarea-clear-icon {

@@ -69,7 +69,6 @@ export default defineComponent({
       if (!('checked' in props)) {
         this.sChecked = e.target.checked;
       }
-      this.$forceUpdate(); // change前，维持现有状态
       e.shiftKey = this.eventShiftKey;
       const eventObj = {
         target: {
@@ -84,7 +83,12 @@ export default defineComponent({
         },
         nativeEvent: e,
       };
-      this.__emit('update:checked', eventObj);
+
+      // fix https://github.com/vueComponent/ant-design-vue/issues/3047
+      // 受控模式下维持现有状态
+      if ('checked' in props) {
+        this.$refs.input.checked = props.checked;
+      }
       this.__emit('change', eventObj);
       this.eventShiftKey = false;
     },
@@ -96,18 +100,8 @@ export default defineComponent({
   },
 
   render() {
-    const {
-      prefixCls,
-      name,
-      id,
-      type,
-      disabled,
-      readonly,
-      tabindex,
-      autofocus,
-      value,
-      ...others
-    } = getOptionProps(this);
+    const { prefixCls, name, id, type, disabled, readonly, tabindex, autofocus, value, ...others } =
+      getOptionProps(this);
     const { class: className, onFocus, onBlur } = this.$attrs;
     const globalProps = Object.keys({ ...others, ...this.$attrs }).reduce((prev, key) => {
       if (key.substr(0, 5) === 'aria-' || key.substr(0, 5) === 'data-' || key === 'role') {

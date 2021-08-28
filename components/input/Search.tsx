@@ -1,6 +1,6 @@
 import { defineComponent, inject } from 'vue';
 import classNames from '../_util/classNames';
-import { isMobile } from 'is-mobile';
+import isMobile from '../_util/isMobile';
 import Input from './Input';
 import LoadingOutlined from '@ant-design/icons-vue/LoadingOutlined';
 import SearchOutlined from '@ant-design/icons-vue/SearchOutlined';
@@ -32,10 +32,10 @@ export default defineComponent({
       this.input = node;
     },
     handleChange(e: Event) {
+      this.$emit('update:value', (e.target as HTMLInputElement).value);
       if (e && e.target && e.type === 'click') {
         this.$emit('search', (e.target as HTMLInputElement).value, e);
       }
-      this.$emit('update:value', (e.target as HTMLInputElement).value);
       this.$emit('change', e);
     },
     handleSearch(e: Event) {
@@ -43,7 +43,7 @@ export default defineComponent({
         return;
       }
       this.$emit('search', this.input.stateValue, e);
-      if (!isMobile({ tablet: true })) {
+      if (!isMobile.tablet) {
         this.input.focus();
       }
     },
@@ -167,7 +167,7 @@ export default defineComponent({
         [`${prefixCls}-${size}`]: !!size,
       });
     } else {
-      inputClassName = prefixCls;
+      inputClassName = classNames(prefixCls, className);
     }
 
     const inputProps = {

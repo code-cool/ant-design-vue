@@ -6,6 +6,7 @@ import classNames from '../../_util/classNames';
 import KeyCode from '../../_util/KeyCode';
 import InputHandler from './InputHandler';
 import { defineComponent } from 'vue';
+import supportsPassive from '../../_util/supportsPassive';
 
 function preventDefault(e) {
   e.preventDefault();
@@ -265,6 +266,10 @@ export default defineComponent({
 
       this.__emit('keyup', e, ...args);
     },
+    onTrigger(e) {
+      if (e.target.composing) return false;
+      this.onChange(e);
+    },
     onChange(e) {
       if (this.$data.focused) {
         this.inputting = true;
@@ -288,7 +293,7 @@ export default defineComponent({
       });
       const value = this.getCurrentValidValue(this.$data.inputValue);
       const newValue = this.setValue(value);
-      if (this.$attrs.onBlur) {
+      if (this.$attrs.onBlur && this.inputRef) {
         const originValue = this.inputRef.value;
         const inputValue = this.getInputDisplayValue({ focused: false, sValue: newValue });
         this.inputRef.value = inputValue;
@@ -631,6 +636,13 @@ export default defineComponent({
     saveInput(node) {
       this.inputRef = node;
     },
+    onCompositionstart(e) {
+      e.target.composing = true;
+    },
+    onCompositionend(e) {
+      this.onChange(e);
+      e.target.composing = false;
+    },
   },
   render() {
     const props = { ...this.$props, ...this.$attrs };
@@ -688,11 +700,13 @@ export default defineComponent({
     let downEvents;
     if (useTouch) {
       upEvents = {
-        onTouchstart: editable && !upDisabledClass && this.up,
+        [supportsPassive ? 'onTouchstartPassive' : 'onTouchstart']:
+          editable && !upDisabledClass && this.up,
         onTouchend: this.stop,
       };
       downEvents = {
-        onTouchstart: editable && !downDisabledClass && this.down,
+        [supportsPassive ? 'onTouchstartPassive' : 'onTouchstart']:
+          editable && !downDisabledClass && this.down,
         onTouchend: this.stop,
       };
     } else {
@@ -791,7 +805,9 @@ export default defineComponent({
             name={this.name}
             title={this.title}
             id={this.id}
-            onInput={this.onChange}
+            onInput={this.onTrigger}
+            onCompositionstart={this.onCompositionstart}
+            onCompositionend={this.onCompositionend}
             ref={this.saveInput}
             value={inputDisplayValue}
             pattern={this.pattern}

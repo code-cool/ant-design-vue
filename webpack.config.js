@@ -11,14 +11,7 @@ const babelConfig = {
       '@babel/preset-env',
       {
         targets: {
-          browsers: [
-            'last 2 versions',
-            'Firefox ESR',
-            '> 1%',
-            'ie >= 11',
-            'iOS >= 8',
-            'Android >= 4',
-          ],
+          browsers: ['last 2 versions', 'Firefox ESR', '> 1%', 'not ie 11'],
         },
       },
     ],
@@ -33,7 +26,7 @@ const babelConfig = {
         style: true,
       },
     ],
-    ['@vue/babel-plugin-jsx', { mergeProps: false }],
+    ['@vue/babel-plugin-jsx', { mergeProps: false, enableObjectSlots: false }],
     '@babel/plugin-proposal-optional-chaining',
     '@babel/plugin-transform-object-assign',
     '@babel/plugin-proposal-object-rest-spread',
@@ -43,24 +36,28 @@ const babelConfig = {
   ],
 };
 
+/** @type {import('webpack').Configuration} */
+
 module.exports = {
   mode: 'development',
   entry: {
     app: './examples/index.js',
   },
+  stats: {
+    warningsFilter: /export .* was not found in/,
+  },
   module: {
     rules: [
       {
-        test: /\.(vue|md)$/,
+        test: /\.md$/,
+        loader: 'raw-loader',
+      },
+      {
+        test: /\.(vue)$/,
         loader: 'vue-loader',
-        exclude: /\.(en-US.md|zh-CN.md)$/,
       },
       {
-        test: /\.(en-US.md|zh-CN.md)$/,
-        use: [{ loader: 'vue-loader' }, { loader: './loader.js' }],
-      },
-      {
-        test: /\.tsx?$/,
+        test: /\.(ts|tsx)?$/,
         use: [
           {
             loader: 'babel-loader',
@@ -68,6 +65,11 @@ module.exports = {
           },
           {
             loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+              appendTsSuffixTo: ['\\.vue$'],
+              happyPackMode: false,
+            },
           },
         ],
         exclude: /node_modules/,
@@ -109,9 +111,7 @@ module.exports = {
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: true,
-            },
+            options: {},
           },
           'css-loader',
         ],
@@ -122,7 +122,7 @@ module.exports = {
     alias: {
       'ant-design-vue/es': path.join(__dirname, './components'),
       'ant-design-vue': path.join(__dirname, './components'),
-      vue$: 'vue/dist/vue.esm-bundler.js',
+      vue$: 'vue/dist/vue.runtime.esm-bundler.js',
     },
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue', '.md'],
   },
@@ -130,11 +130,10 @@ module.exports = {
     historyApiFallback: {
       rewrites: [{ from: /./, to: '/index.html' }],
     },
-    disableHostCheck: true,
     hot: true,
     open: true,
   },
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'inline-cheap-module-source-map',
   plugins: [
     new MiniCssExtractPlugin({
       filename: '[name].css',
